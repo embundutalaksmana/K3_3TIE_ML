@@ -10,6 +10,8 @@ import numpy as np
 import seaborn as sns
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
+from sklearn.tree import export_graphviz
+from graphviz import Source
 
 st.set_page_config(page_title="Prediksi & Cluster Anime", page_icon=":tada:", layout="wide")
 
@@ -109,6 +111,12 @@ with st.container():
                     plt.title("Heatmap Hasil", fontsize=20)
                     sns.heatmap(confusion_matrix(ytest, y_predict), annot=True)
                     st.pyplot(fig)
+                    st.write("---")
+                    st.write("Mohon Tunggu, karena Prosesnya sedikit lama")
+                    Xtrain = list(map(str, xtrain.columns))
+                    dot_data = export_graphviz(model, out_file=None, feature_names=Xtrain, class_names=list(map(str, model.classes_)))
+                    graph = Source(dot_data)
+                    graph.render("Hasil pohon_keputusan dari Prediksi Anime")
 
         
     if selected == "Cluster Anime":
