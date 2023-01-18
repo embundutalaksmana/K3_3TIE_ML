@@ -84,7 +84,7 @@ with st.container():
                 data_select = list(set(data_select) & set(col_num))
 
                 # Pilih kolom yang tidak memiliki tipe data numerik
-                data_select = st.multiselect("Pilih kolom data", data_select, default=data_select)
+                data_select = st.multiselect("Pilih 1 kolom data", data_select, default=data_select)
 
                 
 
