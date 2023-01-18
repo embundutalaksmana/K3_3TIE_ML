@@ -117,6 +117,16 @@ with st.container():
                     dot_data = export_graphviz(model, out_file=None, feature_names=Xtrain, class_names=list(map(str, model.classes_)))
                     graph = Source(dot_data)
                     graph.render("Hasil pohon_keputusan dari Prediksi Anime")
+                    importances = model.feature_importances_
+                    st.write("---")
+                    st.write("Hasil Feature Importances:")
+                    for name, importance in zip(Xtrain, importances):
+                        st.write(f'{name}: {importance}')
+
+                    # Menampilkan jumlah daun yang ada pada pohon keputusan
+                    n_nodes = model.tree_.node_count
+                    st.write("---")
+                    st.write(f'Jumlah daun pada pohon keputusan: {n_nodes}')
 
         
     if selected == "Cluster Anime":
