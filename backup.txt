@@ -1,0 +1,99 @@
+import streamlit as st
+import pandas as pd
+from streamlit_option_menu import option_menu
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression, Ridge
+import matplotlib.pyplot as plt
+
+st.set_page_config(page_title="ML Trainer v1", page_icon=":tada:", layout="wide")
+
+MODEL = {
+    'LinearRegression': LinearRegression, 
+    'Ridge': Ridge
+}
+
+
+def create_page(content, page_title=""):
+    st.title(page_title)
+    st.write(content)
+
+# 1. as sidebar
+with st.sidebar:
+    selected = option_menu(
+        menu_title="Navigation Menu",
+        options=["Prediksi Anime", "Anggota Kelompok"],
+        icons=["book", "envelope"],
+        default_index=0,
+        styles={
+                "nav-link-selected": {"background-color": "red"},
+            },
+    )
+
+    st.write("---")
+    ml_model = st.radio("ML Model", ("LinearRegression", "Ridge"), index=0)
+    if ml_model == 'Ridge':
+        model = MODEL.get(ml_model)(alpha=5.0)
+    else:
+        model = MODEL.get(ml_model)()
+
+with st.container():
+    if selected == "Prediksi Anime":
+        content = """Aplikasi ini berfungsi untuk prediksi kepopuleran anime dengan data target rating dan data latih yakni members dan episodes.
+        Pada aplikasi ini kami menggunakan algoritma  LinearRegression, dan Ridge
+        """
+        create_page(content, page_title=selected)
+        st.write("---")
+        
+        uploaded_file = st.file_uploader("1. Importe le fichier csv (sous forme de tableau)", type=["csv"])
+        
+        if uploaded_file:
+            df = pd.read_csv(uploaded_file)
+            st.dataframe(df)
+            st.write("---")
+            target_select = 'rating'
+            data_select = ['episodes', 'members']
+
+            # Pilih kolom target dan data dari dataframe
+            target = df[target_select]
+            data = df[data_select]
+
+            # Tampilkan kolom target dan data yang dipilih
+            st.write("Kolom target yang dipilih: ", target_select)
+            
+            # Pilih kolom yang hanya memiliki tipe data numerik
+            col_num = df.select_dtypes(include='number').columns
+
+            # Mengambil kolom yang memiliki tipe data numerik
+            data_select = list(set(data_select) & set(col_num))
+
+            # Pilih kolom yang tidak memiliki tipe data numerik
+            data_select = st.multiselect("Pilih kolom data", data_select, default=data_select)
+
+            
+
+            st.write("---")
+            sample_train_test_size = st.slider("pilih ukuran sampel pelatihan (rekomendasi 70%)", 0, 100, 70)
+
+            xtrain, xtest, ytrain, ytest = train_test_split(data, target, train_size=sample_train_test_size/100.0, random_state=1)
+            st.write("##")
+
+            train_button = st.button("Latih model")
+
+            
+            if train_button:
+                model.fit(xtrain, ytrain)
+                y_predict = model.predict(xtest)
+                st.success(f'Train Accuracy: {round(model.score(xtrain, ytrain)*100,2)}%')
+                st.success(f'Predictive Data Accuracy: {round(model.score(xtest, ytest)*100,2)}%')
+
+                #scatterplot
+                st.line_chart(plt.plot(xtest, y_predict, color = 'blue'))
+
+
+
+
+
+    if selected == "Anggota Kelompok":
+        content = "1. Embun Duta Laksmana\n 2. Jessen Wind Lim\n 3. Tasya Nurul Fadila"
+        create_page(content, page_title=selected)
+
