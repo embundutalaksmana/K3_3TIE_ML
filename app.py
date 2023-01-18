@@ -125,7 +125,6 @@ with st.container():
 
                     # Menampilkan jumlah daun yang ada pada pohon keputusan
                     n_nodes = model.tree_.node_count
-                    st.write("---")
                     st.write(f'Jumlah daun pada pohon keputusan: {n_nodes}')
 
         
