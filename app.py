@@ -107,6 +107,7 @@ with st.container():
                     st.write(classification_report(ytest, y_predict))
                     #tampilkan heatmap
                     st.write("---")
+                    st.write("OUTPUT")
                     fig = plt.figure()
                     plt.title("Heatmap Hasil", fontsize=20)
                     sns.heatmap(confusion_matrix(ytest, y_predict), annot=True)
